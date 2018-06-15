@@ -1,0 +1,40 @@
+<html>
+  <head>
+
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1,minimal-ui" name="viewport">
+    <link rel="stylesheet" href="/libs/css_family_Roboto_300_400_500_700_400italic_Material_Icons.css">
+    <link rel="stylesheet" href="/libs/vue-material.min.css">
+    <link rel="stylesheet" href="/libs/default.css">
+
+    <script src="/libs/vue.js"></script>
+    <script src="/libs/vue-material@beta"></script>
+  </head>
+  <body>
+
+    <div id="app">
+      Environments
+      <div v-for="filePath in environmentsFilePaths">
+        {{ filePath }}
+      </div>
+      <md-button class="md-raised md-primary" @click="addEnvironment">Add Environment</md-button>
+
+      <div>
+
+
+            <md-dialog-prompt
+              :md-active.sync="promptActive"
+              v-model="value"
+              md-title="What's your name?"
+              md-input-maxlength="30"
+              md-input-placeholder="Type your name..."
+              md-confirm-text="Done" />
+
+            <md-button class="md-primary md-raised" @click="promptActive = true">Prompt</md-button>
+            <span v-if="value">Value: {{ value }}</span>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
