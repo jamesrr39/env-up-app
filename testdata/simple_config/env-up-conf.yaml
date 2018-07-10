@@ -1,0 +1,8 @@
+name: 'Test System!'
+components:
+- name: 'app 1'
+  description: 'powering 1 things'
+  runCmd: 'echo "111"'
+- name: 'app 2'
+  description: 'powering 2 things'
+  runCmd: 'echo "222"'

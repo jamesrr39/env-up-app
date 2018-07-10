@@ -3,21 +3,21 @@ Vue.use(VueMaterial.default)
 var app = new Vue({
     el: '#app',
     data: {
-        environmentsFilePaths: [],
-        promptActive: false,
-        value: "",
+        name: "",
+        components: [],
     },
     mounted() {
       this.getConfig();
     },
     methods: {
       getConfig() {
-        fetch('/api/config').then(response => {
+        fetch('/api/environment').then(response => {
           if (response.status !== 200) {
             throw new Error(response.text());
           }
           response.json().then(body => {
-            this.config = body
+            this.name = body.name;
+            this.components = body.components;
           });
         });
       },

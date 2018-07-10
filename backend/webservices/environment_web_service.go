@@ -17,18 +17,11 @@ func NewEnvironmentWebService(environmentRepository *repository.EnvironmentRepos
 	router := chi.NewRouter()
 
 	ws := &EnvironmentWebService{router, environmentRepository}
-	router.Get("/{filePath}", ws.handleGet)
+	router.Get("/", ws.handleGet)
 
 	return ws
 }
 
 func (ws *EnvironmentWebService) handleGet(w http.ResponseWriter, r *http.Request) {
-	filePath := chi.URLParam(r, "filePath")
-	environment, err := ws.environmentRepository.Get(filePath)
-	if err != nil {
-		http.Error(w, err.Error(), 500) // TODO better error code
-		return
-	}
-
-	render.JSON(w, r, environment)
+	render.JSON(w, r, ws.environmentRepository.Get())
 }

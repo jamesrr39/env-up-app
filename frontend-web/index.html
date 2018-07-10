@@ -13,25 +13,13 @@
   <body>
 
     <div id="app">
-      Environments
-      <div v-for="filePath in environmentsFilePaths">
-        {{ filePath }}
-      </div>
-      <md-button class="md-raised md-primary" @click="addEnvironment">Add Environment</md-button>
-
-      <div>
-
-
-            <md-dialog-prompt
-              :md-active.sync="promptActive"
-              v-model="value"
-              md-title="What's your name?"
-              md-input-maxlength="30"
-              md-input-placeholder="Type your name..."
-              md-confirm-text="Done" />
-
-            <md-button class="md-primary md-raised" @click="promptActive = true">Prompt</md-button>
-            <span v-if="value">Value: {{ value }}</span>
+      {{ name }}
+      <div style="display: flex">
+        <div v-for="component in components" style="margin: 10px; border: 1px dashed black; padding: 10px;">
+          <h2>{{ component.name }}</h2>
+          <p>{{ component.description }}</p>
+          <code>{{ component.runCmd }}</code>
+        </div>
       </div>
     </div>
 

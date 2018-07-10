@@ -4,47 +4,37 @@ import (
 	"compress/gzip"
 	"env-up-app/backend/repository"
 	"env-up-app/backend/webservices"
+	"fmt"
 	"log"
-	"os"
-	"path/filepath"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/jamesrr39/goutil/httpextra"
-	"github.com/jamesrr39/goutil/userextra"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
 
 func main() {
-	configLocation := kingpin.Flag("config-location", "filepath to where the configuration is stored").Default("~/.config/github.com/jamesrr39/env-up-main/default.yaml").String()
+	envLocation := kingpin.Arg("env-location", "filepath to the environment").Default("env-up-conf.yaml").String()
+	port := kingpin.Flag("p", "port").Default("9010").Int16()
 	kingpin.Parse()
 
-	expandedConfigLocation, err := userextra.ExpandUser(*configLocation)
+	environmentRepo, err := repository.NewEnvironmentRepository(*envLocation)
 	if err != nil {
-		log.Fatalf("failed to expand '%s'. Error: '%s'\n", *configLocation, err)
-	}
-
-	err = os.MkdirAll(filepath.Dir(expandedConfigLocation), 0700)
-	if err != nil {
-		log.Fatalf("failed to create '%s'. Error: '%s'\n", expandedConfigLocation, err)
-	}
-
-	configRepository, err := repository.NewConfigRepository(expandedConfigLocation)
-	if err != nil {
-		log.Fatalf("failed to read configuration from '%s'. Error: '%s'\n", expandedConfigLocation, err)
+		log.Fatalln(err)
 	}
 
 	mainRouter := chi.NewRouter()
 	mainRouter.Use(middleware.Compress(gzip.DefaultCompression))
 	mainRouter.Route("/api/", func(r chi.Router) {
-		r.Mount("/config", webservices.NewConfigWebService(configRepository))
-		r.Mount("/environment", webservices.NewEnvironmentWebService(repository.NewEnvironmentRepository()))
+		r.Mount("/environment", webservices.NewEnvironmentWebService(environmentRepo))
 	})
 	mainRouter.Mount("/", webservices.NewStaticAssetsHandler())
 
 	server := httpextra.NewServerWithTimeouts()
-	server.Addr = "localhost:9010"
+	addr := fmt.Sprintf("localhost:%d", *port)
+	server.Addr = addr
 	server.Handler = mainRouter
+	log.Printf("serving on %q\n", addr)
 	err = server.ListenAndServe()
 	if err != nil {
 		log.Fatalln(err)
