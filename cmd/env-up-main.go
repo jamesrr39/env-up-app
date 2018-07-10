@@ -15,7 +15,7 @@ import (
 
 func main() {
 	envLocation := kingpin.Arg("env-location", "filepath to the environment").Default("env-up-conf.yaml").String()
-	port := kingpin.Flag("p", "port").Default("9010").Int16()
+	port := kingpin.Flag("p", "port").Default("9010").Uint16()
 	kingpin.Parse()
 
 	environmentRepo, err := repository.NewEnvironmentRepository(*envLocation)
