@@ -1,0 +1,76 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "KmjnydoAbofMieIWm+it5OWERaM=",
+			"origin": "gopkg.in/alecthomas/kingpin.v2/vendor/github.com/alecthomas/template",
+			"path": "github.com/alecthomas/template",
+			"revision": "1087e65c9441605df944fb12c33f0fe7072d18ca",
+			"revisionTime": "2017-07-27T04:22:29Z"
+		},
+		{
+			"checksumSHA1": "3wt0pTXXeS+S93unwhGoLIyGX/Q=",
+			"origin": "gopkg.in/alecthomas/kingpin.v2/vendor/github.com/alecthomas/template/parse",
+			"path": "github.com/alecthomas/template/parse",
+			"revision": "1087e65c9441605df944fb12c33f0fe7072d18ca",
+			"revisionTime": "2017-07-27T04:22:29Z"
+		},
+		{
+			"checksumSHA1": "fCc3grA7vIxfBru7R3SqjcW+oLI=",
+			"origin": "gopkg.in/alecthomas/kingpin.v2/vendor/github.com/alecthomas/units",
+			"path": "github.com/alecthomas/units",
+			"revision": "1087e65c9441605df944fb12c33f0fe7072d18ca",
+			"revisionTime": "2017-07-27T04:22:29Z"
+		},
+		{
+			"checksumSHA1": "2T3sb2ZthMry+Tyng2oWGRjSFv0=",
+			"path": "github.com/go-chi/chi",
+			"revision": "f2aed534ddaae0ec331ea305ef9a804b67b672f6",
+			"revisionTime": "2017-12-13T20:22:12Z"
+		},
+		{
+			"checksumSHA1": "biZUshk6kZIfFAyL9pT5FDg2pwA=",
+			"path": "github.com/go-chi/chi/middleware",
+			"revision": "f2aed534ddaae0ec331ea305ef9a804b67b672f6",
+			"revisionTime": "2017-12-13T20:22:12Z"
+		},
+		{
+			"checksumSHA1": "A2pvBObG7boB0BjpoUj3sBZAAsg=",
+			"path": "github.com/go-chi/render",
+			"revision": "8c8c7a43d054b536d7e18e82c4331e7258f211a2",
+			"revisionTime": "2017-12-31T23:41:54Z"
+		},
+		{
+			"checksumSHA1": "i+qxU1ivdwEYzLyl5gnExRgGrVg=",
+			"path": "github.com/jamesrr39/goutil/httpextra",
+			"revision": "eef48524bd8aca4e054517db8bc370b479c26847",
+			"revisionTime": "2018-07-04T21:38:34Z"
+		},
+		{
+			"checksumSHA1": "fV97ryTfS2E+uL7jBjhX8tO1I7k=",
+			"path": "github.com/rakyll/statik",
+			"revision": "d5ad23bc79e541d7dbff7f7a7cc8f583c15fc384",
+			"revisionTime": "2018-07-09T22:41:48Z"
+		},
+		{
+			"checksumSHA1": "++Uxr4F++QrnFEbBlQsJ3VuQoNM=",
+			"path": "github.com/rakyll/statik/fs",
+			"revision": "d5ad23bc79e541d7dbff7f7a7cc8f583c15fc384",
+			"revisionTime": "2018-07-09T22:41:48Z"
+		},
+		{
+			"checksumSHA1": "3SZTatHIy9OTKc95YlVfXKnoySg=",
+			"path": "gopkg.in/alecthomas/kingpin.v2",
+			"revision": "1087e65c9441605df944fb12c33f0fe7072d18ca",
+			"revisionTime": "2017-07-27T04:22:29Z"
+		},
+		{
+			"checksumSHA1": "ZSWoOPUNRr5+3dhkLK3C4cZAQPk=",
+			"path": "gopkg.in/yaml.v2",
+			"revision": "5420a8b6744d3b0345ab293f6fcba19c978f1183",
+			"revisionTime": "2018-03-28T19:50:20Z"
+		}
+	],
+	"rootPath": "env-up-app"
+}
