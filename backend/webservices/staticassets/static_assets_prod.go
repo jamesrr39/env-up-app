@@ -1,5 +1,6 @@
-//+build prod
-package webservices
+// +build prod
+
+package staticassets
 
 import (
 	"log"

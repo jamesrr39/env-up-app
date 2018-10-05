@@ -1,6 +1,6 @@
-//+build !prod
+// +build !prod
 
-package webservices
+package staticassets
 
 import "net/http"
 

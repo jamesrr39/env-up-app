@@ -15,11 +15,12 @@
     <div id="app">
       {{ name }}
       <div style="display: flex">
-        <div v-for="component in components" style="margin: 10px; border: 1px dashed black; padding: 10px;">
-          <h2>{{ component.name }}</h2>
-          <p>{{ component.description }}</p>
-          <code>{{ component.runCmd }}</code>
-        </div>
+        <cluster-component
+          v-for="component in components"
+          v-bind:component="component"
+          v-bind:key="component.name"
+        >
+        </cluster-component>
       </div>
     </div>
 
