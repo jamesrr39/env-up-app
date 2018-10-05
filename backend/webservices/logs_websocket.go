@@ -1,24 +1,23 @@
 package webservices
 
 import (
-	"env-up-app/backend/types"
-	"fmt"
+	"env-up-app/backend/repository"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/gorilla/websocket"
 )
 
 type LogsWebsocketService struct {
-	upgrader websocket.Upgrader
+	environmentRepository *repository.EnvironmentRepository
+	upgrader              websocket.Upgrader
 	chi.Router
 }
 
-func NewLogsWebsocketService() *LogsWebsocketService {
+func NewLogsWebsocketService(environmentRepository *repository.EnvironmentRepository) *LogsWebsocketService {
 	router := chi.NewRouter()
-	service := &LogsWebsocketService{websocket.Upgrader{}, router}
+	service := &LogsWebsocketService{environmentRepository, websocket.Upgrader{}, router}
 	router.HandleFunc("/", service.handleWebsocket)
 	return service
 }
@@ -30,18 +29,27 @@ func (s *LogsWebsocketService) handleWebsocket(w http.ResponseWriter, r *http.Re
 		return
 	}
 	defer c.Close()
-	i := 1
+
 	for {
-		time.Sleep(time.Second)
-		c.WriteJSON(types.NewLogMessage(
-			&types.Component{
-				Name: "app 1",
-			},
-			types.PipeStdout,
-			fmt.Sprintf("#%d", i),
-		))
-		i++
+		message := <-s.environmentRepository.LogMessageChan
+		err := c.WriteJSON(message)
+		if err != nil {
+			log.Printf("failed to marshal to json and write to websocket. Error: %q. Object: %q\n", err, message)
+			continue
+		}
 	}
+	// i := 1
+	// for {
+	// 	time.Sleep(time.Second)
+	// 	c.WriteJSON(types.NewLogMessage(
+	// 		&types.Component{
+	// 			Name: "app 1",
+	// 		},
+	// 		types.PipeStdout,
+	// 		fmt.Sprintf("#%d", i),
+	// 	))
+	// 	i++
+	// }
 	// for {
 	// 	mt, message, err := c.ReadMessage()
 	// 	if err != nil {

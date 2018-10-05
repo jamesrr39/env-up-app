@@ -15,7 +15,44 @@ Vue.component('cluster-component', {
   props: ['component'],
 });
 
-var app = new Vue({
+let app;
+
+function onEnvFetched(response) {
+    if (response.status !== 200) {
+      throw new Error(response.text());
+    }
+    response.json().then(body => {
+      app.name = body.name;
+      const components = body.components.map(component => ({
+        ...component,
+        logMessages: [],
+      }));
+      this.components = components;
+
+      const ws = new WebSocket(`ws://${window.location.host}/api/environment/logs`)
+      ws.onmessage = (event) => {
+        console.log(event.data);
+        const data = JSON.parse(event.data);
+        components = components.map(component => {
+          if (component.name !== data.componentName) {
+            return component;
+          }
+
+          return {
+            ...component,
+            logMessages: component.logMessages.concat([data.message]),
+          };
+        });
+        app.components = components;
+      }
+
+      ws.onerror = (event) => {
+        alert(`websocket error: ${JSON.stringify(event.data)}`);
+      }
+    });
+}
+
+app = new Vue({
     el: '#app',
     data: {
         name: "",
@@ -25,44 +62,34 @@ var app = new Vue({
       this.getConfig();
     },
     methods: {
-      getConfig() {
+      getConfig: function() {
+        const self = this;
+
         fetch('/api/environment').then(response => {
           if (response.status !== 200) {
             throw new Error(response.text());
           }
           response.json().then(body => {
-            this.name = body.name;
-            const components = body.components.map(component => ({
+            self.name = body.name;
+            self.components = body.components.map(component => ({
               ...component,
               logMessages: [],
             }));
-            this.components = components;
-
-            const ws = new WebSocket(`ws://${window.location.host}/api/environment/logs`)
-            ws.onmessage = (event) => {
-              console.log(event.data);
-              const data = JSON.parse(event.data);
-              components = components.filter(component => {
-                if (component.name !== data.componentName) {
-                  return component;
-                }
-
-                return {
-                  ...component,
-                  logMessages: component.logMessages.concat([data.message]),
-                };
-              });
-              this.components = components;
-            }
-
-            ws.onerror = (event) => {
-              alert(`websocket error: ${JSON.stringify(event.data)}`);
-            }
+            self.openWebsocket();
           });
         });
       },
-      addEnvironment() {
-        this.promptActive = true;
+      openWebsocket () {
+        const ws = new WebSocket(`ws://${window.location.host}/api/environment/logs`)
+        ws.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          const component = this.components.find(component => component.name === data.componentName);
+          component.logMessages.push(data.message);
+        };
+
+        ws.onerror = (event) => {
+          alert(`websocket error: ${JSON.stringify(event.data)}`);
+        };
       },
     },
 });

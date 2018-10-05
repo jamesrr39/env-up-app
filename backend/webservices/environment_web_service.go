@@ -20,7 +20,7 @@ func NewEnvironmentWebService(environmentRepository *repository.EnvironmentRepos
 	ws := &EnvironmentWebService{router, environmentRepository}
 	router.Get("/", ws.handleGet)
 	router.Post("/{componentName}/start", ws.handleStartComponent)
-	router.Mount("/logs", NewLogsWebsocketService())
+	router.Mount("/logs", NewLogsWebsocketService(environmentRepository))
 
 	return ws
 }
