@@ -4,6 +4,12 @@ Vue.component('cluster-component', {
   template: `
   <div id="component" style="margin: 10px; border: 1px dashed black; padding: 10px;">
     <h2>{{ component.name }}</h2>
+    <div v-if="isRunning">
+      <button type="button" @click="stop">Stop</button>
+    </div>
+    <div v-else>
+      <button type="button" @click="start">Start</button>
+    </div>
     <p>{{ component.description }}</p>
     <code>{{ component.runCmd }}</code>
     <ul>
@@ -13,46 +19,38 @@ Vue.component('cluster-component', {
     </ul>
   </div>`,
   props: ['component'],
+  methods: {
+    start() {
+      this.isRunning = true;
+      fetch(`/api/environment/${encodeURIComponent(this.component.name)}/start`, {
+      // fetch(`/api/app%201/start`, {
+        method: 'POST'
+      }).then(response => {
+        if (response.code >= 300 || response.code < 200) {
+          this.isRunning = false;
+          console.log("error");
+        }
+      });
+    }
+    stop() {
+      this.isRunning = true;
+      fetch(`/api/environment/${encodeURIComponent(this.component.name)}/stop`, {
+      // fetch(`/api/app%201/start`, {
+        method: 'POST'
+      }).then(response => {
+        if (response.code >= 300 || response.code < 200) {
+          this.isRunning = false;
+          console.log("error");
+        }
+      });
+    }
+  },
+  data: {
+    isRunning: false,
+  }
 });
 
-let app;
-
-function onEnvFetched(response) {
-    if (response.status !== 200) {
-      throw new Error(response.text());
-    }
-    response.json().then(body => {
-      app.name = body.name;
-      const components = body.components.map(component => ({
-        ...component,
-        logMessages: [],
-      }));
-      this.components = components;
-
-      const ws = new WebSocket(`ws://${window.location.host}/api/environment/logs`)
-      ws.onmessage = (event) => {
-        console.log(event.data);
-        const data = JSON.parse(event.data);
-        components = components.map(component => {
-          if (component.name !== data.componentName) {
-            return component;
-          }
-
-          return {
-            ...component,
-            logMessages: component.logMessages.concat([data.message]),
-          };
-        });
-        app.components = components;
-      }
-
-      ws.onerror = (event) => {
-        alert(`websocket error: ${JSON.stringify(event.data)}`);
-      }
-    });
-}
-
-app = new Vue({
+new Vue({
     el: '#app',
     data: {
         name: "",
@@ -90,6 +88,10 @@ app = new Vue({
         ws.onerror = (event) => {
           alert(`websocket error: ${JSON.stringify(event.data)}`);
         };
+
+        window.addEventListener('beforeunload', () => {
+          ws.close();
+        });
       },
     },
 });

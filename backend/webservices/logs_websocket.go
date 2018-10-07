@@ -30,12 +30,16 @@ func (s *LogsWebsocketService) handleWebsocket(w http.ResponseWriter, r *http.Re
 	}
 	defer c.Close()
 
+	listener := s.environmentRepository.GetLogMessageChanListener()
+
 	for {
-		message := <-s.environmentRepository.LogMessageChan
-		err := c.WriteJSON(message)
-		if err != nil {
-			log.Printf("failed to marshal to json and write to websocket. Error: %q. Object: %q\n", err, message)
-			continue
+		select {
+		case message := <-listener:
+			err := c.WriteJSON(message)
+			if err != nil {
+				log.Printf("failed to marshal to json and write to websocket. Error: %q. Object: %v\n", err, message)
+				continue
+			}
 		}
 	}
 	// i := 1
