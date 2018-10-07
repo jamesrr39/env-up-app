@@ -23,7 +23,6 @@ Vue.component('cluster-component', {
     start() {
       this.isRunning = true;
       fetch(`/api/environment/${encodeURIComponent(this.component.name)}/start`, {
-      // fetch(`/api/app%201/start`, {
         method: 'POST'
       }).then(response => {
         if (response.code >= 300 || response.code < 200) {
@@ -31,23 +30,23 @@ Vue.component('cluster-component', {
           console.log("error");
         }
       });
-    }
+    },
     stop() {
-      this.isRunning = true;
+      this.isRunning = false;
       fetch(`/api/environment/${encodeURIComponent(this.component.name)}/stop`, {
       // fetch(`/api/app%201/start`, {
         method: 'POST'
       }).then(response => {
         if (response.code >= 300 || response.code < 200) {
-          this.isRunning = false;
+          this.isRunning = true;
           console.log("error");
         }
       });
     }
   },
-  data: {
+  data: () => ({
     isRunning: false,
-  }
+  })
 });
 
 new Vue({

@@ -31,40 +31,36 @@ func (s *LogsWebsocketService) handleWebsocket(w http.ResponseWriter, r *http.Re
 	defer c.Close()
 
 	listener := s.environmentRepository.GetLogMessageChanListener()
+	defer listener.Close()
+
+	closeChan := make(chan struct{})
+
+	go func() {
+		for {
+			mt, message, err := c.ReadMessage()
+			if err != nil {
+				if websocket.IsCloseError(err, websocket.CloseNoStatusReceived) {
+					println("close no status received")
+					closeChan <- struct{}{}
+					return
+				}
+				log.Printf("error reading message: %q\n", err)
+				return
+			}
+			log.Printf("got message: type: %d. Message: %q\n", mt, message)
+		}
+	}()
 
 	for {
 		select {
-		case message := <-listener:
+		case message := <-listener.Chan:
 			err := c.WriteJSON(message)
 			if err != nil {
 				log.Printf("failed to marshal to json and write to websocket. Error: %q. Object: %v\n", err, message)
 				continue
 			}
+		case <-closeChan:
+			return
 		}
 	}
-	// i := 1
-	// for {
-	// 	time.Sleep(time.Second)
-	// 	c.WriteJSON(types.NewLogMessage(
-	// 		&types.Component{
-	// 			Name: "app 1",
-	// 		},
-	// 		types.PipeStdout,
-	// 		fmt.Sprintf("#%d", i),
-	// 	))
-	// 	i++
-	// }
-	// for {
-	// 	mt, message, err := c.ReadMessage()
-	// 	if err != nil {
-	// 		log.Println("read:", err)
-	// 		break
-	// 	}
-	// 	log.Printf("recv: %s", message)
-	// 	err = c.WriteMessage(mt, message)
-	// 	if err != nil {
-	// 		log.Println("write:", err)
-	// 		break
-	// 	}
-	// }
 }

@@ -89,9 +89,25 @@ func (r *EnvironmentRepository) readFromPipe(component *types.Component, pipe ty
 	}
 }
 
-func (r *EnvironmentRepository) GetLogMessageChanListener() chan *types.LogMessage {
-	listener := make(chan *types.LogMessage)
-	r.logMessageChanListeners = append(r.logMessageChanListeners, listener)
+type Listener struct {
+	Chan                  chan *types.LogMessage
+	environmentRepository *EnvironmentRepository
+}
+
+func (l *Listener) Close() {
+	for i, thisChan := range l.environmentRepository.logMessageChanListeners {
+		if l.Chan == thisChan {
+			l.environmentRepository.logMessageChanListeners = append(
+				l.environmentRepository.logMessageChanListeners[:i],
+				l.environmentRepository.logMessageChanListeners[i+1:]...,
+			)
+		}
+	}
+}
+
+func (r *EnvironmentRepository) GetLogMessageChanListener() *Listener {
+	listener := &Listener{make(chan *types.LogMessage), r}
+	r.logMessageChanListeners = append(r.logMessageChanListeners, listener.Chan)
 	return listener
 }
 
