@@ -22,4 +22,4 @@ build_prod_linux_x86_64: clean bundle_static_assets
 .PHONY: build_prod_macos
 build_prod_macos: clean bundle_static_assets
 	mkdir -p build/bin/macos
-	env GOOS=macos GOARCH=amd64 CGO_ENABLED=0 go build -tags "purego prod" -o build/bin/macos/env-up-app cmd/env-up-main.go
+	env GOOS=darwin GOARCH=386 CGO_ENABLED=0 go build -tags "purego prod" -o build/bin/macos/env-up-app cmd/env-up-main.go
